@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>osalbum</title>
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+      }
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      #wrap {
+        box-sizing: border-box;
+        padding: 10px;
+        /* TODO: */
+        height: 100%;
+        overflow: hidden;
+      }
+      #topbar {
+        padding: 10px 0;
+        border-bottom: 1px solid #ccc;
+        text-align: right;
+      }
+      #topbar button {
+        margin: 0;
+        margin-left: 5px;
+        outline: none;
+        padding: 4px 16px;
+        box-sizing: border-box;
+        display: inline-block;
+        border: none;
+        border-radius: 3px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.5;
+        background-color: #f0f0f0;
+        color: #223;
+      }
+      #topbar button.primary {
+        background-color: #3d97d4;
+        color: #fff;
+      }
+      #topbar button:hover {
+        background-color: #207ab7;
+        color: #fff;
+      }
+      #topbar button.removeall {
+        float: left;
+      }
+      #file_list {
+        display: grid;
+        grid-gap: 10px;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        padding-top: 10px;
+        height: 100%;
+        overflow-y: scroll;
+        /* 隐藏滚动条 */
+        overflow-x: hidden;
+      }
+      #file_list::-ms-overflow-style {
+        display: none;
+      }
+      #file_list::-webkit-scrollbar {
+        display: none;
+      }
+
+      #file_list:empty:after {
+        content: '可以直接拖拽文件到这里';
+        color: #777;
+        font-size: 0.8em;
+      }
+      #file_list li {
+        position: relative;
+        display: block;
+        vertical-align: top;
+        padding: 5px 5px;
+        border-radius: 5px;
+      }
+      #file_list li.up-over {
+      }
+      #file_list li.up-now {
+      }
+      #file_list li.up-now:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8) url(loading.gif) center center no-repeat;
+        border-radius: 5px;
+        z-index: 999;
+      }
+      #file_list li:hover {
+        background-color: #ddd;
+      }
+      .file_select {
+        background-color: #ddd;
+      }
+
+      #file_list li .picbox {
+        display: flex;
+        flex: 0 0 auto;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        padding-top: 100%;
+        align-items: center;
+        cursor: pointer;
+      }
+      #file_list li .picbox img {
+        -webkit-user-drag: none;
+        /* 禁止webkit浏览器拖拽图片 */
+        -moz-user-drag: none;
+        /* 禁止Firefox浏览器拖拽图片 */
+        -ms-user-drag: none;
+        /* 禁止IE浏览器拖拽图片 */
+
+        -webkit-user-select: none;
+        /* 禁止webkit浏览器选中图片 */
+        -moz-user-select: none;
+        /* 禁止Firefox浏览器选中图片 */
+        -ms-user-select: none;
+        /* 禁止IE浏览器选中图片 */
+        user-select: none;
+        /* 其他浏览器选中图片 */
+
+        display: block;
+        max-width: 100%;
+        max-height: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+      }
+      #file_list li.up-over .picbox:after {
+        content: url('data:image/svg+xml;%20charset=utf8,%3Csvg%20viewBox%3D%220%200%201024%201024%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%3E%3Cpath%20d%3D%22M512%200C229.376%200%200%20229.376%200%20512s229.376%20512%20512%20512%20512-229.376%20512-512S794.624%200%20512%200z%22%20fill%3D%22%234AC711%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M855.552%20394.752l-358.4%20358.4a50.9952%2050.9952%200%200%201-72.192%200l-204.8-204.8c-18.944-19.968-18.944-51.2%200-71.168a50.5344%2050.5344%200%200%201%2072.192-1.024L460.8%20644.608l322.048-322.048c19.968-18.944%2051.2-18.944%2071.168%200%2020.48%2019.456%2020.992%2051.712%201.536%2072.192z%22%20fill%3D%22%23FFFFFF%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E');
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        z-index: 9;
+      }
+      #file_list li .tools {
+        display: none;
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        z-index: 99;
+      }
+      #file_list li:hover .tools {
+        display: block;
+      }
+      /* #file_list li .tools .remove {
+        cursor: pointer;
+      }
+      #file_list li .tools .remove:after {
+        content: url('data:image/svg+xml;%20charset=utf8,%3Csvg%20width=%2224%22%20height=%2224%22%20viewBox=%220%200%2024%2024%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath%20d=%22M17%206h3a1%201%200%200%201%200%202h-1v11a3%203%200%200%201-3%203H8a3%203%200%200%201-3-3V8H4a1%201%200%201%201%200-2h3V5a3%203%200%200%201%203-3h4a3%203%200%200%201%203%203v1zm-2%200V5a1%201%200%200%200-1-1h-4a1%201%200%200%200-1%201v1h6zm2%202H7v11a1%201%200%200%200%201%201h8a1%201%200%200%200%201-1V8zm-8%203a1%201%200%200%201%202%200v6a1%201%200%200%201-2%200v-6zm4%200a1%201%200%200%201%202%200v6a1%201%200%200%201-2%200v-6z%22%3E%3C/path%3E%3C/svg%3E');
+      } */
+      #file_list li .namebox {
+        font-size: 14px;
+        line-height: 20px;
+        max-height: 40px;
+        overflow: hidden;
+        padding: 5px 10px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      #file_list li .namebox span {
+        word-break: break-all;
+        vertical-align: top;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <div id="topbar">
+        <button class="addfile primary">手动请求</button>
+      </div>
+      <ul id="file_list"></ul>
+    </div>
+
+    <script>
+      // 节流阀
+      let flag = true
+
+      let fromData = {
+        page: 1,
+        size: 20
+      }
+      let pages = 0
+      let total = 0
+      // 是否已拉取所有图片
+      let isFinish = false
+
+      // 每轮 api 请求返回的数据
+      let apiList = []
+
+      var editor = parent.tinymce.activeEditor
+      var osalbum = parent.osalbum
+
+      var selected_img_url = osalbum.selected_img_url
+      var osalbum_options = osalbum.osalbum_options
+
+      // 显示图片列表
+      function showImageList(newUrlArr) {
+        var imgs_sum = newUrlArr.length
+        var vDom = document.createDocumentFragment()
+        for (let i = 0; i < imgs_sum; i++) {
+          let newUrl = newUrlArr[i]
+
+          let li = document.createElement('li')
+          li.setAttribute('class', 'up-no')
+          li.setAttribute('data-time', +new Date() + ((Math.random() * 1230).toFixed(0) + ''))
+          li.innerHTML =
+            '<div class="picbox"><img src="' +
+            newUrl +
+            '"></div><div class="namebox"><span>' +
+            +new Date() +
+            ((Math.random() * 1230).toFixed(0) + '') +
+            '</span></div><div class="tools"><a class="remove"></a></div>'
+          vDom.appendChild(li)
+        }
+        document.querySelector('#file_list').appendChild(vDom)
+      }
+
+      // api 请求图片列表
+      async function getList(params) {
+        if (isFinish) {
+          return
+        }
+        if (!flag || isFinish) return
+        await osalbum_options.osalbum_paging_img_list(
+          showImageList,
+          () => {
+            isFinish = true
+          },
+          (boolean) => {
+            flag = boolean
+          }
+        )
+      }
+
+      // 监听
+      var observ_flist = new MutationObserver((muList, observe) => {
+        if (muList[0].addedNodes.length > 0) {
+          muList[0].addedNodes.forEach((el) => {
+            el.onclick = () => {
+              let url = el.childNodes[0].childNodes[0].src
+
+              if (el.classList.contains('file_select')) {
+                // 如果有，就删除
+                el.classList.remove('file_select')
+                selected_img_url = selected_img_url.filter((item) => item !== url)
+              } else {
+                el.classList.add('file_select')
+                selected_img_url.push(url)
+              }
+            }
+          })
+        }
+      })
+      observ_flist.observe(document.querySelector('#file_list'), { childList: true })
+
+      document.querySelector('#file_list').addEventListener('scroll', () => {
+        scrollFn()
+      })
+
+      function scrollFn() {
+        // 指定元素
+        // TODO:
+        const chatList = document.querySelector('#file_list')
+        // 元素总高度
+        const Totalheight = chatList.scrollHeight
+        // 卷帘
+        const scrollTop = Math.floor(chatList.scrollTop)
+        // 视口
+        const viewHight = chatList.clientHeight
+        // 视口 + 卷帘
+        const total = viewHight + scrollTop
+
+        const isTouchBottom = Totalheight <= total + 180
+        if (isTouchBottom) {
+          getList()
+        } else {
+        }
+      }
+
+      document.querySelector('.addfile').addEventListener('click', () => {
+        getList()
+      })
+
+      getList()
+    </script>
+  </body>
+</html>

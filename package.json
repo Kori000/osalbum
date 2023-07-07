@@ -1,0 +1,17 @@
+{
+  "name": "osalbum",
+  "version": "1.0.0",
+  "description": "Album management",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Tinymce",
+    "Plugin",
+    "Album",
+    "Management"
+  ],
+  "author": "Kori",
+  "license": "ISC"
+}
