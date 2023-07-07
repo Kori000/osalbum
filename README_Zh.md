@@ -1,5 +1,7 @@
 # osalbum
 
+[![npm version](https://img.shields.io/npm/v/osalbum.svg?style=flat-square)](https://www.npmjs.org/package/osalbum)
+
 🌏 [English](https://github.com/Kori000/osalbum/blob/main/README.md)
 
 ## 功能

@@ -1,5 +1,11 @@
 # osalbum
 
+<div align="left">
+
+[![npm version](https://img.shields.io/npm/v/osalbum.svg?style=flat-square)](https://www.npmjs.org/package/osalbum)
+
+</div>
+
 👀 [中文文档](https://github.com/Kori000/osalbum/blob/main/README_Zh.md)
 
 ## Feature
