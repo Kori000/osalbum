@@ -29,7 +29,7 @@
   - `osalbum_paging_img_list(showImageList, finish, flag){}` necessary functions
     - **showImageList** receive string[] (url array), echo to list `showImageList(['http://1xxx.png','http://2xxx.png','http://3xxx.png'])`
     - **finish** after execution, the interface will no longer be requested `finish()`
-    - **flag** 防抖函数, ` flag(false)`/ `flag(true)`
+    - **flag** debounce function, ` flag(false)`/ `flag(true)`
   - `destroy()` callback function after the plugin is closed
 
 ## Init
