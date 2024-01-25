@@ -1,6 +1,6 @@
 {
   "name": "osalbum",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Album management",
   "main": "index.js",
   "scripts": {
